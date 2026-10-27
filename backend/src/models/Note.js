@@ -1,8 +1,5 @@
 import mongoose from "mongoose";
 
-// 1- create a schema
-// 2- create a model based on the schema
-
 const replySchema = new mongoose.Schema(
   {
     content: {
@@ -13,19 +10,38 @@ const replySchema = new mongoose.Schema(
   { timestamps: true },
 );
 
+const taskSchema = new mongoose.Schema(
+  {
+    text: {
+      type: String,
+      required: true,
+    },
+    completed: {
+      type: Boolean,
+      default: false,
+    }
+  }
+);
+
 const notesSchema = new mongoose.Schema(
   {
+    type: {
+      type: String,
+      enum: ['note', 'todo'],
+      default: 'note',
+    },
     title: {
       type: String,
       required: true,
     },
     content: {
       type: String,
-      required: true,
+      required: function() { return this.type === 'note'; },
     },
+    tasks: [taskSchema],
     replies: [replySchema],
   },
-  { timestamps: true }, // createdAt and updatedAt fields
+  { timestamps: true },
 );
 
 const Note = mongoose.model("Note", notesSchema);
