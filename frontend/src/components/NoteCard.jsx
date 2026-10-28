@@ -136,6 +136,7 @@ const NoteCard = ({ note, setNotes }) => {
               type="text"
               className="input input-bordered input-sm flex-1 font-bold text-lg"
               value={editTitle}
+              maxLength={100}
               onChange={(e) => setEditTitle(e.target.value)}
               onClick={(e) => e.stopPropagation()}
             />
@@ -156,6 +157,7 @@ const NoteCard = ({ note, setNotes }) => {
               className="textarea textarea-bordered w-full mt-2 resize-none"
               rows={5}
               value={editContent}
+              maxLength={5000}
               onChange={(e) => setEditContent(e.target.value)}
               onClick={(e) => e.stopPropagation()}
             />
@@ -264,6 +266,7 @@ const NoteCard = ({ note, setNotes }) => {
                 className="textarea textarea-bordered flex-1 text-sm min-h-[2.5rem] resize-none focus:outline-primary/20"
                 placeholder="Write a reply..."
                 value={replyContent}
+                maxLength={1000}
                 onChange={(e) => setReplyContent(e.target.value)}
                 rows={1}
                 onKeyDown={(e) => {

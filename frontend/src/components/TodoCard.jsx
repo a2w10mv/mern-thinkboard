@@ -164,6 +164,7 @@ const TodoCard = ({ note, setNotes }) => {
               type="text"
               className="input input-bordered input-sm flex-1 font-bold text-lg"
               value={editTitle}
+              maxLength={100}
               onChange={(e) => setEditTitle(e.target.value)}
               onClick={(e) => e.stopPropagation()}
             />
