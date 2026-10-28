@@ -1,27 +1,44 @@
 import { useEffect, useState } from "react";
-import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
+import RGL, { WidthProvider } from "react-grid-layout";
+import "react-grid-layout/css/styles.css";
+import "react-resizable/css/styles.css";
 import api from "../lib/axios";
 import Navbar from "../components/Navbar";
 import RateLimitedUI from "../components/RateLimitedUI";
 import toast from "react-hot-toast";
+
 import NoteCard from "../components/NoteCard";
 import TodoCard from "../components/TodoCard";
+import TimeWidget from "../components/TimeWidget";
+import WeatherWidget from "../components/WeatherWidget";
+import TimerWidget from "../components/TimerWidget";
+import MascotWidget from "../components/MascotWidget";
+
 import NotesNotFound from "../components/NotesNotFound";
+import { FileTextIcon, ListTodoIcon, GripHorizontalIcon } from "lucide-react";
 import SnowfallBackground from "../components/SnowfallBackground";
 import FireworksBackground from "../components/FireworksBackground";
-import { FileTextIcon, ListTodoIcon, GripHorizontalIcon } from "lucide-react";
+import { LayoutGridIcon } from "lucide-react";
+
+// For vite/rollup compatibility with react-grid-layout
+import { Responsive } from "react-grid-layout";
+import * as RGLMod from "react-grid-layout";
+const ResponsiveGridLayout = RGLMod.WidthProvider(RGLMod.Responsive || Responsive);
 
 const HomePage = () => {
   const [isRateLimited, setIsRateLimited] = useState(false);
   const [items, setItems] = useState([]);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchItems = async () => {
       try {
-        const res = await api.get("/notes");
+        const res = await api.get(`/notes?page=${page}&limit=20`);
         console.log("Fetched items:", res.data);
-        setItems(res.data);
+        setItems(res.data.notes);
+        setTotalPages(res.data.totalPages);
         setIsRateLimited(false);
       } catch (error) {
         console.error("Error fetching items", error);
@@ -35,59 +52,88 @@ const HomePage = () => {
       }
     };
     fetchItems();
-  }, []);
+  }, [page]);
 
-  const handleDragEnd = async (result) => {
-    if (!result.destination) return;
-    const { source, destination } = result;
-
-    if (source.droppableId === destination.droppableId && source.index === destination.index) {
-      return;
-    }
-
-    const itemType = destination.droppableId;
-    const isTodo = itemType === 'todos';
-
-    // Maintain existing ordering before drag
-    const currentList = items
-      .filter(item => isTodo ? item.type === 'todo' : (item.type === 'note' || !item.type))
-      .sort((a, b) => (a.order || 0) - (b.order || 0));
-
-    const otherList = items
-      .filter(item => isTodo ? (item.type === 'note' || !item.type) : item.type === 'todo')
-      .sort((a, b) => (a.order || 0) - (b.order || 0));
-
-    // Reorder array
-    const reorderedList = Array.from(currentList);
-    const [movedItem] = reorderedList.splice(source.index, 1);
-    reorderedList.splice(destination.index, 0, movedItem);
+  const handleLayoutChange = async (currentLayout) => {
+    if (loading) return; // Prevent saving empty layout during load
 
     const updates = reorderedList.map((item, index) => {
-      item.order = index; // update local state directly so it renders correctly right away
+      const newOrder = ((page - 1) * 20) + index;
+      item.order = newOrder; // update local state directly so it renders correctly right away
       return {
         id: item._id,
-        order: index
+        order: newOrder
       };
     });
 
-    setItems([...reorderedList, ...otherList]);
+    // Update local state layout to prevent jumping
+    setItems(prev => prev.map(item => {
+        const update = updates.find(u => u.id === item._id);
+        if (update) {
+            return { ...item, layout: update.layout };
+        }
+        return item;
+    }));
 
     try {
       await api.put('/notes/reorder', { updates });
     } catch (error) {
-      console.error('Failed to save new order:', error);
-      toast.error('Failed to save order');
+      console.error('Failed to save layout:', error);
+      toast.error('Failed to save dashboard layout');
     }
   };
 
-  const notes = items.filter(item => item.type === 'note' || !item.type).sort((a, b) => (a.order || 0) - (b.order || 0));
-  const todos = items.filter(item => item.type === 'todo').sort((a, b) => (a.order || 0) - (b.order || 0));
+  const renderItem = (item) => {
+    let content = null;
+    const type = item.type || 'note';
 
-  const now = new Date();
-  const month = now.getMonth();
-  const day = now.getDate();
-  const isSnowfall = month === 11 && day >= 1 && day <= 25;
-  const isFireworks = (month === 11 && day >= 26) || month === 0;
+    switch (type) {
+        case 'note':
+            content = <NoteCard note={item} setNotes={setItems} />;
+            break;
+        case 'todo':
+            content = <TodoCard note={item} setNotes={setItems} />;
+            break;
+        case 'time':
+            content = <TimeWidget />;
+            break;
+        case 'weather':
+            content = <WeatherWidget />;
+            break;
+        case 'timer':
+            content = <TimerWidget />;
+            break;
+        case 'mascot':
+            content = <MascotWidget />;
+            break;
+        default:
+            content = <div className="p-4 bg-error text-error-content rounded">Unknown Widget Type</div>;
+    }
+
+    return (
+        <div key={item._id} className="h-full w-full group relative">
+             {/* Drag Handle for all items */}
+             <div className="absolute top-2 right-2 z-50 p-1.5 bg-base-200/80 backdrop-blur rounded opacity-0 group-hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing border border-base-300 widget-drag-handle">
+                <LayoutGridIcon className="size-4 text-base-content/70" />
+            </div>
+            {content}
+        </div>
+    );
+  };
+
+  const layout = items.map(item => {
+      const l = item.layout || { x: 0, y: Infinity, w: 2, h: 2 };
+      return {
+          i: item._id,
+          x: l.x,
+          y: l.y,
+          w: l.w,
+          h: l.h,
+          minW: 1,
+          minH: 1
+      };
+  });
+
 
   return (
     <div className="min-h-screen relative">
@@ -95,7 +141,7 @@ const HomePage = () => {
         <Navbar />
         {isRateLimited && <RateLimitedUI />}
 
-        <div className="max-w-7xl mx-auto p-4 mt-6">
+        <div className="mx-auto p-4 mt-2 max-w-[1400px]">
           {loading && (
             <div className="flex justify-center items-center py-20">
                <span className="loading loading-spinner text-primary loading-lg"></span>
@@ -104,8 +150,6 @@ const HomePage = () => {
 
           {!loading && items.length === 0 && !isRateLimited && <NotesNotFound />}
 
-          {isSnowfall && <SnowfallBackground />}
-          {isFireworks && <FireworksBackground />}
 
           {!loading && items.length > 0 && !isRateLimited && (
             <DragDropContext onDragEnd={handleDragEnd}>
@@ -198,6 +242,24 @@ const HomePage = () => {
                 )}
 
               </div>
+                <div className="flex justify-center items-center gap-4 mt-8 pb-8">
+                  <button
+                    className="btn btn-primary"
+                    disabled={page === 1}
+                    onClick={() => setPage(p => Math.max(1, p - 1))}
+                  >
+                    Previous
+                  </button>
+                  <span className="text-base-content font-medium">Page {page} of {totalPages || 1}</span>
+                  <button
+                    className="btn btn-primary"
+                    disabled={page === totalPages || items.length === 0}
+                    onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                  >
+                    Next
+                  </button>
+                </div>
+
             </DragDropContext>
           )}
         </div>
