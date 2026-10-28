@@ -5,6 +5,7 @@ const replySchema = new mongoose.Schema(
     content: {
       type: String,
       required: true,
+      maxlength: 1000,
     },
   },
   { timestamps: true },
@@ -15,6 +16,7 @@ const taskSchema = new mongoose.Schema(
     text: {
       type: String,
       required: true,
+      maxlength: 500,
     },
     completed: {
       type: Boolean,
@@ -39,11 +41,12 @@ const notesSchema = new mongoose.Schema(
     },
     title: {
       type: String,
-      required: function() { return ['note', 'todo'].includes(this.type); },
-    },
+      required: true,
+      maxlength: 100,
     content: {
       type: String,
       required: function() { return this.type === 'note'; },
+      maxlength: 5000,
     },
     order: {
       type: Number,

@@ -52,6 +52,9 @@ export async function createNote(req, res) {
     res.status(201).json({ note: savedNote });
   } catch (error) {
     console.error("Error in createNote controller", error);
+    if (error.name === "ValidationError") {
+      return res.status(400).json({ message: error.message });
+    }
     res.status(500).json({ message: "Internal server error" });
   }
 }
@@ -74,6 +77,9 @@ export async function updateNote(req, res) {
     res.status(200).json({ message: "Note updated successfully", note: updateNote });
   } catch (error) {
     console.error("Error in updateNote controller", error);
+    if (error.name === "ValidationError") {
+      return res.status(400).json({ message: error.message });
+    }
     res.status(500).json({ message: "Internal server error" });
   }
 }
@@ -106,6 +112,9 @@ export async function addReply(req, res) {
     res.status(201).json({ note: savedNote });
   } catch (error) {
     console.error("Error in addReply controller", error);
+    if (error.name === "ValidationError") {
+      return res.status(400).json({ message: error.message });
+    }
     res.status(500).json({ message: "Internal server error" });
   }
 }

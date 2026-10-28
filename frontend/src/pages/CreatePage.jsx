@@ -115,6 +115,7 @@ const CreatePage = () => {
                     placeholder="Enter title here..."
                     className="input input-bordered focus:input-primary"
                     value={title}
+                    maxLength={100}
                     onChange={(e) => setTitle(e.target.value)}
                   />
                 </div>
@@ -128,6 +129,7 @@ const CreatePage = () => {
                       placeholder="Write your note here..."
                       className="textarea textarea-bordered h-40 focus:textarea-primary"
                       value={content}
+                      maxLength={5000}
                       onChange={(e) => setContent(e.target.value)}
                     />
                   </div>
@@ -144,6 +146,7 @@ const CreatePage = () => {
                             placeholder={`Task ${index + 1}`}
                             className="input input-bordered flex-1 focus:input-secondary"
                             value={task.text}
+                            maxLength={500}
                             onChange={(e) => handleTaskTextChange(index, e.target.value)}
                           />
                           <button
