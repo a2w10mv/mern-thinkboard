@@ -20,7 +20,6 @@ const HomePage = () => {
     const fetchItems = async () => {
       try {
         const res = await api.get("/notes");
-        console.log("Fetched items:", res.data);
         setItems(res.data);
         setIsRateLimited(false);
       } catch (error) {
