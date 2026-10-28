@@ -38,6 +38,10 @@ const notesSchema = new mongoose.Schema(
       type: String,
       required: function() { return this.type === 'note'; },
     },
+    order: {
+      type: Number,
+      default: () => Date.now(), // Automatically set based on creation time, allowing sorting
+    },
     tasks: [taskSchema],
     replies: [replySchema],
   },
