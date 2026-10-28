@@ -15,6 +15,7 @@ import TimerWidget from "../components/TimerWidget";
 import MascotWidget from "../components/MascotWidget";
 
 import NotesNotFound from "../components/NotesNotFound";
+import { FileTextIcon, ListTodoIcon, GripHorizontalIcon } from "lucide-react";
 import SnowfallBackground from "../components/SnowfallBackground";
 import FireworksBackground from "../components/FireworksBackground";
 import { LayoutGridIcon } from "lucide-react";
@@ -142,11 +143,6 @@ const HomePage = () => {
       };
   });
 
-  const now = new Date();
-  const month = now.getMonth();
-  const day = now.getDate();
-  const isSnowfall = month === 11 && day >= 1 && day <= 25;
-  const isFireworks = (month === 11 && day >= 26) || month === 0;
 
   return (
     <div className="min-h-screen relative">
@@ -163,8 +159,6 @@ const HomePage = () => {
 
           {!loading && items.length === 0 && !isRateLimited && <NotesNotFound />}
 
-          {isSnowfall && <SnowfallBackground />}
-          {isFireworks && <FireworksBackground />}
 
           {!loading && items.length > 0 && !isRateLimited && (
             <ResponsiveGridLayout
