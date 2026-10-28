@@ -61,7 +61,7 @@ const CreatePage = () => {
       toast.success(`${type === 'note' ? 'Note' : 'To-Do List'} created successfully`);
       navigate("/");
     } catch (error) {
-      console.log(`Error creating ${type}, ${error}`);
+      console.error(`Error creating ${type}, ${error}`);
       if (error.response?.status === 429) {
         toast.error("Slow down! You're creating items too fast", {
           duration: 4000,
