@@ -47,7 +47,8 @@ describe("createNote controller", () => {
     const mockSavedNote = {
       _id: "mockId123",
       ...mockNoteData,
-      order: -1234567890
+      order: -1234567890,
+      layout: { x: 0, y: Infinity, w: 2, h: 2 }
     };
 
     // Note is a constructor function in the implementation
@@ -69,7 +70,8 @@ describe("createNote controller", () => {
       content: "Test Content",
       type: "note",
       tasks: undefined,
-      order: -1234567890
+      order: -1234567890,
+      layout: { x: 0, y: Infinity, w: 2, h: 2 }
     });
 
     // Check that we called json with the saved note

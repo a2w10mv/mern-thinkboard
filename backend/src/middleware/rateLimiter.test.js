@@ -5,7 +5,9 @@ describe('rateLimiter middleware', () => {
     let mockLimit;
 
     beforeEach(() => {
-        req = {};
+        req = {
+            ip: '127.0.0.1'
+        };
         res = {
             status: jest.fn().mockReturnThis(),
             json: jest.fn()
@@ -49,7 +51,7 @@ describe('rateLimiter middleware', () => {
         await ratelimiter(req, res, next);
 
         expect(mockLimit).toHaveBeenCalledTimes(1);
-        expect(mockLimit).toHaveBeenCalledWith('my-limit-key');
+        expect(mockLimit).toHaveBeenCalledWith('rate-limit:127.0.0.1');
         expect(next).toHaveBeenCalledTimes(1);
         expect(next).toHaveBeenCalledWith();
         expect(res.status).not.toHaveBeenCalled();
