@@ -48,8 +48,13 @@ const TodoCard = ({ note, setNotes }) => {
     );
     setTasks(updatedTasks);
 
-    // Update local state copy so edits don't wipe it
-    note.tasks = updatedTasks;
+    setNotes((prev) =>
+      prev.map((n) =>
+        n._id === note._id
+          ? { ...n, tasks: updatedTasks }
+          : n
+      )
+    );
 
     try {
       // Send update to backend using the same update route, but we need to send all tasks
@@ -62,7 +67,13 @@ const TodoCard = ({ note, setNotes }) => {
       console.log("Error toggling task", error);
       // Revert on failure
       setTasks(tasks);
-      note.tasks = tasks;
+      setNotes((prev) =>
+        prev.map((n) =>
+          n._id === note._id
+            ? { ...n, tasks: tasks }
+            : n
+        )
+      );
       toast.error("Failed to update task");
     }
   };
@@ -110,9 +121,6 @@ const TodoCard = ({ note, setNotes }) => {
             : n,
         ),
       );
-      // Update local display
-      note.title = res.data.note.title;
-      note.tasks = res.data.note.tasks;
       setTasks(res.data.note.tasks);
       setEditing(false);
       toast.success("To-do list updated!");
@@ -152,7 +160,7 @@ const TodoCard = ({ note, setNotes }) => {
   return (
     <div
       className={`card bg-base-100 transition-all duration-300 border border-base-300 border-t-4 border-t-secondary cursor-pointer self-start ${
-        expanded ? "shadow-2xl h-auto" : "shadow-sm hover:shadow-md h-52"
+        expanded ? "shadow-2xl h-auto" : "shadow-sm hover:shadow-md h-full"
       }`}
       onClick={toggleExpand}
     >

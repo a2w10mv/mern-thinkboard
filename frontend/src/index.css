@@ -1,3 +1,26 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.react-grid-item.react-grid-placeholder {
+    background: var(--fallback-bc,oklch(var(--bc)/0.2)) !important;
+    opacity: 0.2;
+    border-radius: var(--rounded-box, 1rem);
+}
+
+.react-resizable-handle {
+    bottom: 5px !important;
+    right: 5px !important;
+    z-index: 100 !important;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.react-grid-item:hover .react-resizable-handle {
+    opacity: 1;
+}
+
+/* Ensure the cards fill the grid items */
+.react-grid-item > div {
+    height: 100%;
+}
