@@ -1,6 +1,7 @@
-import { Link } from "react-router";
-import { PlusIcon, Palette } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router";
+import { PlusIcon, Palette, LogOut } from "lucide-react";
+import { useEffect, useState, useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
 
 const themes = [
   "light", "dark", "cupcake", "bumblebee", "emerald", "corporate",
@@ -15,10 +16,18 @@ const Navbar = () => {
     localStorage.getItem("theme") || "sunset"
   );
 
+  const { user, logout } = useContext(AuthContext);
+  const navigate = useNavigate();
+
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
     localStorage.setItem("theme", theme);
   }, [theme]);
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
 
   return (
     <header className="bg-base-300 border-b border-base-content/10">
@@ -47,10 +56,25 @@ const Navbar = () => {
               </ul>
             </div>
 
-            <Link to={"/create"} className="btn btn-primary">
-              <PlusIcon className="size-5" />
-              <span className="hidden sm:inline">New Note</span>
-            </Link>
+            {user && (
+              <>
+                <Link to={"/create"} className="btn btn-primary">
+                  <PlusIcon className="size-5" />
+                  <span className="hidden sm:inline">New Note</span>
+                </Link>
+                <div className="dropdown dropdown-end">
+                   <div tabIndex={0} role="button" className="btn btn-ghost avatar placeholder">
+                      <div className="bg-neutral text-neutral-content rounded-full w-10">
+                        <span className="text-xs">{user.username.substring(0,2).toUpperCase()}</span>
+                      </div>
+                   </div>
+                   <ul tabIndex={0} className="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-300 rounded-box w-52">
+                     <li className="px-4 py-2 font-bold opacity-50 border-b border-base-content/10">Hello, {user.username}</li>
+                     <li><button onClick={handleLogout} className="text-error mt-1"><LogOut className="size-4" /> Logout</button></li>
+                   </ul>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>

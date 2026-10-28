@@ -40,10 +40,15 @@ const notesSchema = new mongoose.Schema(
     },
     order: {
       type: Number,
-      default: () => Date.now(), // Automatically set based on creation time, allowing sorting
+      default: () => Date.now(),
     },
     tasks: [taskSchema],
     replies: [replySchema],
+    owner: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    }
   },
   { timestamps: true },
 );

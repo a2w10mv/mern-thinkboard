@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import path from "path";
 
 import notesRoutes from "./routes/notesRoutes.js";
+import authRoutes from "./routes/authRoutes.js";
 import { connectDB } from "./configs/db.js";
 import rateLimiter from "./middleware/rateLimiter.js";
 
@@ -27,6 +28,7 @@ app.use(express.json());
 app.use(rateLimiter);
 
 // Middleware to handle CORS (Cross-Origin Resource Sharing)
+app.use("/api/auth", authRoutes);
 app.use("/api/notes", notesRoutes);
 
 if (process.env.NODE_ENV === "production") {
