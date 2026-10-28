@@ -35,7 +35,7 @@ const NoteCard = ({ note, setNotes }) => {
       setNotes((prev) => prev.filter((n) => n._id !== id));
       toast.success("Note deleted successfully");
     } catch (e) {
-      console.log("Error in handleDelete", e);
+      console.error("Error in handleDelete", e);
       toast.error("Failed to delete note");
     }
   };
@@ -57,7 +57,7 @@ const NoteCard = ({ note, setNotes }) => {
       setReplyContent("");
       toast.success("Reply added!");
     } catch (error) {
-      console.log("Error adding reply", error);
+      console.error("Error adding reply", error);
       toast.error("Failed to add reply");
     } finally {
       setSubmittingReply(false);
@@ -109,7 +109,7 @@ const NoteCard = ({ note, setNotes }) => {
       setEditing(false);
       toast.success("Note updated!");
     } catch (error) {
-      console.log("Error saving note", error);
+      console.error("Error saving note", error);
       toast.error("Failed to update note");
     } finally {
       setSaving(false);
@@ -124,7 +124,7 @@ const NoteCard = ({ note, setNotes }) => {
   return (
     <div
       className={`card bg-base-100 transition-all duration-300 border border-base-300 border-t-4 border-t-primary cursor-pointer self-start ${
-        expanded ? "shadow-2xl h-auto" : "shadow-sm hover:shadow-md h-52"
+        expanded ? "shadow-2xl h-auto" : "shadow-sm hover:shadow-md h-full"
       }`}
       onClick={toggleExpand}
     >
