@@ -103,9 +103,6 @@ const NoteCard = ({ note, setNotes }) => {
             : n,
         ),
       );
-      // Update local display
-      note.title = res.data.note.title;
-      note.content = res.data.note.content;
       setEditing(false);
       toast.success("Note updated!");
     } catch (error) {
