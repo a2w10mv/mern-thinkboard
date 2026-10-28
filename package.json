@@ -17,9 +17,5 @@
     "url": "https://github.com/palmero-jerome07/mern-thinkboard/issues"
   },
   "homepage": "https://github.com/palmero-jerome07/mern-thinkboard#readme",
-  "description": "",
-  "dependencies": {
-    "axios": "^1.21.0",
-    "mongoose": "^9.11.4"
-  }
+  "description": ""
 }

@@ -6,14 +6,12 @@ import {
   getNoteById,
   updateNote,
   addReply,
-  reorderNotes,
-  seedWidgets
+  reorderNotes
 } from "../controllers/notesController.js";
 
 const router = express.Router();
 
 router.get("/", getAllNotes);
-router.post("/seed", seedWidgets);
 router.get("/:id", getNoteById);
 
 router.post("/", createNote);
