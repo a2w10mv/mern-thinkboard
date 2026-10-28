@@ -54,86 +54,10 @@ const HomePage = () => {
     fetchItems();
   }, [page]);
 
-  const handleLayoutChange = async (currentLayout) => {
-    if (loading) return; // Prevent saving empty layout during load
 
-    const updates = reorderedList.map((item, index) => {
-      const newOrder = ((page - 1) * 20) + index;
-      item.order = newOrder; // update local state directly so it renders correctly right away
-      return {
-        id: item._id,
-        order: newOrder
-      };
-    });
-
-    // Update local state layout to prevent jumping
-    setItems(prev => prev.map(item => {
-        const update = updates.find(u => u.id === item._id);
-        if (update) {
-            return { ...item, layout: update.layout };
-        }
-        return item;
-    }));
-
-    try {
-      await api.put('/notes/reorder', { updates });
-    } catch (error) {
-      console.error('Failed to save layout:', error);
-      toast.error('Failed to save dashboard layout');
-    }
-  };
-
-  const renderItem = (item) => {
-    let content = null;
-    const type = item.type || 'note';
-
-    switch (type) {
-        case 'note':
-            content = <NoteCard note={item} setNotes={setItems} />;
-            break;
-        case 'todo':
-            content = <TodoCard note={item} setNotes={setItems} />;
-            break;
-        case 'time':
-            content = <TimeWidget />;
-            break;
-        case 'weather':
-            content = <WeatherWidget />;
-            break;
-        case 'timer':
-            content = <TimerWidget />;
-            break;
-        case 'mascot':
-            content = <MascotWidget />;
-            break;
-        default:
-            content = <div className="p-4 bg-error text-error-content rounded">Unknown Widget Type</div>;
-    }
-
-    return (
-        <div key={item._id} className="h-full w-full group relative">
-             {/* Drag Handle for all items */}
-             <div className="absolute top-2 right-2 z-50 p-1.5 bg-base-200/80 backdrop-blur rounded opacity-0 group-hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing border border-base-300 widget-drag-handle">
-                <LayoutGridIcon className="size-4 text-base-content/70" />
-            </div>
-            {content}
-        </div>
-    );
-  };
-
-  const layout = items.map(item => {
-      const l = item.layout || { x: 0, y: Infinity, w: 2, h: 2 };
-      return {
-          i: item._id,
-          x: l.x,
-          y: l.y,
-          w: l.w,
-          h: l.h,
-          minW: 1,
-          minH: 1
-      };
-  });
-
+  const handleDragEnd = () => {};
+  const todos = items.filter(item => item.type === 'todo');
+  const notes = items.filter(item => item.type === 'note');
 
   return (
     <div className="min-h-screen relative">

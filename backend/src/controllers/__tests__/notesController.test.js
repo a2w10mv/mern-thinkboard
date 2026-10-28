@@ -69,6 +69,7 @@ describe("createNote controller", () => {
       content: "Test Content",
       type: "note",
       tasks: undefined,
+      layout: { x: 0, y: Infinity, w: 2, h: 2 },
       order: -1234567890
     });
 
