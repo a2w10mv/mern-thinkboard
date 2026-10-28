@@ -49,7 +49,7 @@ describe('rateLimiter middleware', () => {
         await ratelimiter(req, res, next);
 
         expect(mockLimit).toHaveBeenCalledTimes(1);
-        expect(mockLimit).toHaveBeenCalledWith('my-limit-key');
+        expect(mockLimit).toHaveBeenCalledWith('rate-limit:unknown');
         expect(next).toHaveBeenCalledTimes(1);
         expect(next).toHaveBeenCalledWith();
         expect(res.status).not.toHaveBeenCalled();

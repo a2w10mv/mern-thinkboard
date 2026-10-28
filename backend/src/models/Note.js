@@ -43,6 +43,7 @@ const notesSchema = new mongoose.Schema(
       type: String,
       required: true,
       maxlength: 100,
+    },
     content: {
       type: String,
       required: function() { return this.type === 'note'; },
