@@ -1,11 +1,19 @@
 import Note from "../models/Note.js";
 
-export async function getAllNotes(_, res) {
+export async function getAllNotes(req, res) {
   try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 20;
+    const skip = (page - 1) * limit;
+
     // Sort by order ascending (smaller number = higher up).
     // If order is the same, fallback to newest first.
-    const notes = await Note.find().sort({ order: 1, createdAt: -1 });
-    res.status(200).json(notes);
+    const [notes, totalNotes] = await Promise.all([
+      Note.find().sort({ order: 1, createdAt: -1 }).skip(skip).limit(limit),
+      Note.countDocuments()
+    ]);
+
+    res.status(200).json({ notes, totalNotes, totalPages: Math.ceil(totalNotes / limit), currentPage: page });
   } catch (error) {
     console.error("Error in getAllNotes controller", error);
     res.status(500).json({ message: "Internal server error" });

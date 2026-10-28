@@ -14,14 +14,17 @@ import { FileTextIcon, ListTodoIcon, GripHorizontalIcon } from "lucide-react";
 const HomePage = () => {
   const [isRateLimited, setIsRateLimited] = useState(false);
   const [items, setItems] = useState([]);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchItems = async () => {
       try {
-        const res = await api.get("/notes");
+        const res = await api.get(`/notes?page=${page}&limit=20`);
         console.log("Fetched items:", res.data);
-        setItems(res.data);
+        setItems(res.data.notes);
+        setTotalPages(res.data.totalPages);
         setIsRateLimited(false);
       } catch (error) {
         console.error("Error fetching items", error);
@@ -35,7 +38,7 @@ const HomePage = () => {
       }
     };
     fetchItems();
-  }, []);
+  }, [page]);
 
   const handleDragEnd = async (result) => {
     if (!result.destination) return;
@@ -63,10 +66,11 @@ const HomePage = () => {
     reorderedList.splice(destination.index, 0, movedItem);
 
     const updates = reorderedList.map((item, index) => {
-      item.order = index; // update local state directly so it renders correctly right away
+      const newOrder = ((page - 1) * 20) + index;
+      item.order = newOrder; // update local state directly so it renders correctly right away
       return {
         id: item._id,
-        order: index
+        order: newOrder
       };
     });
 
@@ -198,6 +202,24 @@ const HomePage = () => {
                 )}
 
               </div>
+                <div className="flex justify-center items-center gap-4 mt-8 pb-8">
+                  <button
+                    className="btn btn-primary"
+                    disabled={page === 1}
+                    onClick={() => setPage(p => Math.max(1, p - 1))}
+                  >
+                    Previous
+                  </button>
+                  <span className="text-base-content font-medium">Page {page} of {totalPages || 1}</span>
+                  <button
+                    className="btn btn-primary"
+                    disabled={page === totalPages || items.length === 0}
+                    onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                  >
+                    Next
+                  </button>
+                </div>
+
             </DragDropContext>
           )}
         </div>
