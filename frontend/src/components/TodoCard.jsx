@@ -152,7 +152,7 @@ const TodoCard = ({ note, setNotes }) => {
   return (
     <div
       className={`card bg-base-100 transition-all duration-300 border border-base-300 border-t-4 border-t-secondary cursor-pointer self-start ${
-        expanded ? "shadow-2xl h-auto" : "shadow-sm hover:shadow-md h-52"
+        expanded ? "shadow-2xl h-auto" : "shadow-sm hover:shadow-md h-full"
       }`}
       onClick={toggleExpand}
     >

@@ -23,16 +23,23 @@ const taskSchema = new mongoose.Schema(
   }
 );
 
+const layoutSchema = new mongoose.Schema({
+  x: { type: Number, default: 0 },
+  y: { type: Number, default: Infinity },
+  w: { type: Number, default: 2 },
+  h: { type: Number, default: 2 }
+});
+
 const notesSchema = new mongoose.Schema(
   {
     type: {
       type: String,
-      enum: ['note', 'todo'],
+      enum: ['note', 'todo', 'time', 'weather', 'timer', 'mascot'],
       default: 'note',
     },
     title: {
       type: String,
-      required: true,
+      required: function() { return ['note', 'todo'].includes(this.type); },
     },
     content: {
       type: String,
@@ -40,7 +47,11 @@ const notesSchema = new mongoose.Schema(
     },
     order: {
       type: Number,
-      default: () => Date.now(), // Automatically set based on creation time, allowing sorting
+      default: () => Date.now(), // Legacy, keeping just in case
+    },
+    layout: {
+      type: layoutSchema,
+      default: () => ({ x: 0, y: Infinity, w: 2, h: 2 })
     },
     tasks: [taskSchema],
     replies: [replySchema],
