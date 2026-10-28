@@ -7,8 +7,6 @@ import toast from "react-hot-toast";
 import NoteCard from "../components/NoteCard";
 import TodoCard from "../components/TodoCard";
 import NotesNotFound from "../components/NotesNotFound";
-import SnowfallBackground from "../components/SnowfallBackground";
-import FireworksBackground from "../components/FireworksBackground";
 import { FileTextIcon, ListTodoIcon, GripHorizontalIcon } from "lucide-react";
 
 const HomePage = () => {
@@ -83,11 +81,6 @@ const HomePage = () => {
   const notes = items.filter(item => item.type === 'note' || !item.type).sort((a, b) => (a.order || 0) - (b.order || 0));
   const todos = items.filter(item => item.type === 'todo').sort((a, b) => (a.order || 0) - (b.order || 0));
 
-  const now = new Date();
-  const month = now.getMonth();
-  const day = now.getDate();
-  const isSnowfall = month === 11 && day >= 1 && day <= 25;
-  const isFireworks = (month === 11 && day >= 26) || month === 0;
 
   return (
     <div className="min-h-screen relative">
@@ -104,8 +97,6 @@ const HomePage = () => {
 
           {!loading && items.length === 0 && !isRateLimited && <NotesNotFound />}
 
-          {isSnowfall && <SnowfallBackground />}
-          {isFireworks && <FireworksBackground />}
 
           {!loading && items.length > 0 && !isRateLimited && (
             <DragDropContext onDragEnd={handleDragEnd}>
