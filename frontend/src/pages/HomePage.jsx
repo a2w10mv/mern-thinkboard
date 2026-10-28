@@ -28,27 +28,17 @@ const ResponsiveGridLayout = RGLMod.WidthProvider(RGLMod.Responsive || Responsiv
 const HomePage = () => {
   const [isRateLimited, setIsRateLimited] = useState(false);
   const [items, setItems] = useState([]);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchItems = async () => {
       try {
-        let res = await api.get("/notes");
-
-        // Auto-seed missing bento widgets if they don't exist
-        const types = res.data.map(i => i.type);
-        const hasTime = types.includes('time');
-        const hasWeather = types.includes('weather');
-        const hasTimer = types.includes('timer');
-        const hasMascot = types.includes('mascot');
-
-        if (!hasTime || !hasWeather || !hasTimer || !hasMascot) {
-            console.log("Seeding missing widgets...");
-            await api.post("/notes/seed");
-            res = await api.get("/notes"); // Re-fetch
-        }
-
-        setItems(res.data);
+        const res = await api.get(`/notes?page=${page}&limit=20`);
+        console.log("Fetched items:", res.data);
+        setItems(res.data.notes);
+        setTotalPages(res.data.totalPages);
         setIsRateLimited(false);
       } catch (error) {
         console.error("Error fetching items", error);
@@ -62,17 +52,18 @@ const HomePage = () => {
       }
     };
     fetchItems();
-  }, []);
+  }, [page]);
 
   const handleLayoutChange = async (currentLayout) => {
     if (loading) return; // Prevent saving empty layout during load
 
-    // Create bulk update payload
-    const updates = currentLayout.map(l => {
+    const updates = reorderedList.map((item, index) => {
+      const newOrder = ((page - 1) * 20) + index;
+      item.order = newOrder; // update local state directly so it renders correctly right away
       return {
-        id: l.i,
-        layout: { x: l.x, y: l.y, w: l.w, h: l.h }
-      }
+        id: item._id,
+        order: newOrder
+      };
     });
 
     // Update local state layout to prevent jumping
@@ -161,19 +152,115 @@ const HomePage = () => {
 
 
           {!loading && items.length > 0 && !isRateLimited && (
-            <ResponsiveGridLayout
-                className="layout"
-                layouts={{ lg: layout }}
-                breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
-                cols={{ lg: 6, md: 4, sm: 2, xs: 1, xxs: 1 }}
-                rowHeight={100}
-                onLayoutChange={(curr) => handleLayoutChange(curr)}
-                draggableHandle=".widget-drag-handle"
-                isResizable={true}
-                margin={[16, 16]}
-            >
-                {items.map(item => renderItem(item))}
-            </ResponsiveGridLayout>
+            <DragDropContext onDragEnd={handleDragEnd}>
+              <div className="space-y-12">
+
+                {/* Todos Section */}
+                {todos.length > 0 && (
+                  <section>
+                    <div className="flex items-center gap-2 mb-6 pb-2 border-b border-base-300">
+                      <ListTodoIcon className="size-6 text-secondary" />
+                      <h2 className="text-2xl font-bold text-base-content">To-Do Lists</h2>
+                      <span className="badge badge-secondary badge-sm ml-2">{todos.length}</span>
+                    </div>
+                    <Droppable droppableId="todos" direction="horizontal">
+                      {(provided) => (
+                        <div
+                          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start"
+                          {...provided.droppableProps}
+                          ref={provided.innerRef}
+                        >
+                          {todos.map((todo, index) => (
+                            <Draggable key={todo._id} draggableId={todo._id} index={index}>
+                              {(provided, snapshot) => (
+                                <div
+                                  ref={provided.innerRef}
+                                  {...provided.draggableProps}
+                                  className={`relative group ${snapshot.isDragging ? 'z-50' : ''}`}
+                                  style={{...provided.draggableProps.style}}
+                                >
+                                  <div
+                                    {...provided.dragHandleProps}
+                                    className="absolute -top-3 -right-3 z-10 p-2 bg-base-200 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing border border-base-300 hidden md:block"
+                                    title="Drag to reorder"
+                                  >
+                                    <GripHorizontalIcon className="size-4 text-base-content/70" />
+                                  </div>
+                                  <TodoCard note={todo} setNotes={setItems} />
+                                </div>
+                              )}
+                            </Draggable>
+                          ))}
+                          {provided.placeholder}
+                        </div>
+                      )}
+                    </Droppable>
+                  </section>
+                )}
+
+                {/* Notes Section */}
+                {notes.length > 0 && (
+                  <section>
+                    <div className="flex items-center gap-2 mb-6 pb-2 border-b border-base-300">
+                      <FileTextIcon className="size-6 text-primary" />
+                      <h2 className="text-2xl font-bold text-base-content">Notes</h2>
+                      <span className="badge badge-primary badge-sm ml-2">{notes.length}</span>
+                    </div>
+                    <Droppable droppableId="notes" direction="horizontal">
+                      {(provided) => (
+                        <div
+                          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start"
+                          {...provided.droppableProps}
+                          ref={provided.innerRef}
+                        >
+                          {notes.map((note, index) => (
+                            <Draggable key={note._id} draggableId={note._id} index={index}>
+                              {(provided, snapshot) => (
+                                <div
+                                  ref={provided.innerRef}
+                                  {...provided.draggableProps}
+                                  className={`relative group ${snapshot.isDragging ? 'z-50' : ''}`}
+                                  style={{...provided.draggableProps.style}}
+                                >
+                                  <div
+                                    {...provided.dragHandleProps}
+                                    className="absolute -top-3 -right-3 z-10 p-2 bg-base-200 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing border border-base-300 hidden md:block"
+                                    title="Drag to reorder"
+                                  >
+                                    <GripHorizontalIcon className="size-4 text-base-content/70" />
+                                  </div>
+                                  <NoteCard note={note} setNotes={setItems} />
+                                </div>
+                              )}
+                            </Draggable>
+                          ))}
+                          {provided.placeholder}
+                        </div>
+                      )}
+                    </Droppable>
+                  </section>
+                )}
+
+              </div>
+                <div className="flex justify-center items-center gap-4 mt-8 pb-8">
+                  <button
+                    className="btn btn-primary"
+                    disabled={page === 1}
+                    onClick={() => setPage(p => Math.max(1, p - 1))}
+                  >
+                    Previous
+                  </button>
+                  <span className="text-base-content font-medium">Page {page} of {totalPages || 1}</span>
+                  <button
+                    className="btn btn-primary"
+                    disabled={page === totalPages || items.length === 0}
+                    onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                  >
+                    Next
+                  </button>
+                </div>
+
+            </DragDropContext>
           )}
         </div>
       </div>
