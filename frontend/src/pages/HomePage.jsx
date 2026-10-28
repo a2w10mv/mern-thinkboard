@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import RGL, { WidthProvider } from "react-grid-layout";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 import api from "../lib/axios";
@@ -20,9 +19,6 @@ import FireworksBackground from "../components/FireworksBackground";
 import { LayoutGridIcon } from "lucide-react";
 
 // For vite/rollup compatibility with react-grid-layout
-import { Responsive } from "react-grid-layout";
-import * as RGLMod from "react-grid-layout";
-const ResponsiveGridLayout = RGLMod.WidthProvider(RGLMod.Responsive || Responsive);
 
 const HomePage = () => {
   const [isRateLimited, setIsRateLimited] = useState(false);
