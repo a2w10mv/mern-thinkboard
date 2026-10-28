@@ -1,6 +1,6 @@
 import Note from "../models/Note.js";
 
-export async function getAllNotes(_, res) {
+export async function getAllNotes(_req, res) {
   try {
     // Sort by order ascending (smaller number = higher up).
     // If order is the same, fallback to newest first.
