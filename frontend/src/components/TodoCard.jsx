@@ -8,6 +8,7 @@ import {
   XIcon,
   CheckCircle2Icon,
   CircleIcon,
+  ListTodoIcon
 } from "lucide-react";
 import { formatDate } from "../lib/utils";
 import api from "../lib/axios";
@@ -156,11 +157,12 @@ const TodoCard = ({ note, setNotes }) => {
   const completedCount = tasks.filter(t => t.completed).length;
   const totalCount = tasks.length;
   const progress = totalCount === 0 ? 0 : Math.round((completedCount / totalCount) * 100);
+  const isAllDone = totalCount > 0 && completedCount === totalCount;
 
   return (
     <div
-      className={`card bg-base-100 transition-all duration-300 border border-base-300 border-t-4 border-t-secondary cursor-pointer self-start ${
-        expanded ? "shadow-2xl h-auto" : "shadow-sm hover:shadow-md h-full"
+      className={`card bg-base-100 transition-all duration-300 border border-base-300 border-t-4 border-t-secondary cursor-pointer self-start group ${
+        expanded ? "shadow-xl h-auto ring-2 ring-secondary/20" : "shadow hover:shadow-md h-full hover:border-secondary/50"
       }`}
       onClick={toggleExpand}
     >
@@ -170,59 +172,62 @@ const TodoCard = ({ note, setNotes }) => {
           {editing ? (
             <input
               type="text"
-              className="input input-bordered input-sm flex-1 font-bold text-lg"
+              className="input input-bordered input-sm flex-1 font-bold text-lg focus:outline-secondary/50 focus:border-secondary"
               value={editTitle}
               maxLength={100}
               onChange={(e) => setEditTitle(e.target.value)}
               onClick={(e) => e.stopPropagation()}
+              autoFocus
             />
           ) : (
-            <h3 className="card-title text-lg font-bold text-base-content leading-tight">{note.title}</h3>
+            <div className="flex items-center gap-2">
+               <h3 className={`card-title text-lg font-bold leading-tight group-hover:text-secondary transition-colors ${isAllDone ? 'text-base-content/60 line-through' : 'text-base-content'}`}>{note.title}</h3>
+               {isAllDone && !expanded && <CheckCircle2Icon className="size-4 text-secondary/70 shrink-0" />}
+            </div>
           )}
-          {expanded ? (
-            <ChevronUpIcon className="size-5 text-base-content/40 shrink-0 mt-0.5" />
-          ) : (
-            <ChevronDownIcon className="size-5 text-base-content/40 shrink-0 mt-0.5" />
-          )}
+          <button className={`btn btn-ghost btn-xs btn-circle bg-base-200/50 hover:bg-base-300 text-base-content/50 hover:text-base-content transition-transform duration-300 ${expanded ? "rotate-180" : ""}`}>
+             <ChevronDownIcon className="size-4" />
+          </button>
         </div>
 
         {/* Progress Bar (not shown while editing) */}
         {!editing && totalCount > 0 && (
-          <div className="mb-3 shrink-0">
-            <div className="flex justify-between text-xs text-base-content/60 mb-1 font-medium">
+          <div className="mb-4 shrink-0 px-1">
+            <div className="flex justify-between text-[11px] text-base-content/50 mb-1.5 font-bold uppercase tracking-wider">
               <span>Progress</span>
-              <span>{completedCount}/{totalCount} ({progress}%)</span>
+              <span className={isAllDone ? "text-secondary" : ""}>{completedCount}/{totalCount} ({progress}%)</span>
             </div>
-            <progress className="progress progress-secondary w-full" value={progress} max="100"></progress>
+            <progress className={`progress h-2 w-full ${isAllDone ? 'progress-success' : 'progress-secondary bg-secondary/10'}`} value={progress} max="100"></progress>
           </div>
         )}
 
         {/* Content: Tasks List */}
         <div className={`${expanded ? "" : "flex-1 overflow-hidden relative"}`}>
           {editing ? (
-            <div className="space-y-2 mt-2" onClick={(e) => e.stopPropagation()}>
+            <div className="space-y-2.5 mt-2" onClick={(e) => e.stopPropagation()}>
               {editTasks.map((task, index) => (
-                <div key={index} className="flex items-center gap-2">
-                  <div className="text-base-content/40">
+                <div key={index} className="flex items-center gap-2 group/task">
+                  <div className={`shrink-0 ${task.completed ? 'text-secondary/50' : 'text-base-content/30'}`}>
                     {task.completed ? <CheckCircle2Icon className="size-5" /> : <CircleIcon className="size-5" />}
                   </div>
                   <input
                     type="text"
-                    className="input input-bordered input-sm flex-1"
+                    className={`input input-bordered input-sm flex-1 focus:outline-secondary/50 focus:border-secondary transition-colors ${task.completed ? 'opacity-50 line-through' : ''}`}
                     value={task.text}
                     placeholder="Task description..."
                     onChange={(e) => handleTaskTextChange(index, e.target.value)}
                   />
                   <button
-                    className="btn btn-ghost btn-xs text-error"
+                    className="btn btn-ghost btn-xs btn-square text-base-content/30 hover:text-error hover:bg-error/10 opacity-0 group-hover/task:opacity-100 focus:opacity-100 transition-all"
                     onClick={() => handleRemoveTask(index)}
+                    title="Remove task"
                   >
                     <XIcon className="size-4" />
                   </button>
                 </div>
               ))}
               <button
-                className="btn btn-secondary btn-outline btn-sm w-full mt-2"
+                className="btn btn-secondary btn-sm btn-outline w-full mt-3 border-dashed hover:border-solid bg-secondary/5"
                 onClick={handleAddTask}
               >
                 + Add Task
@@ -230,33 +235,38 @@ const TodoCard = ({ note, setNotes }) => {
             </div>
           ) : (
             <>
-              <div className={`space-y-2.5 ${expanded ? "" : ""}`}>
+              <div className={`space-y-3 ${expanded ? "mb-2" : ""}`}>
                 {tasks.length === 0 ? (
-                  <p className="text-base-content/50 text-sm italic">No tasks added yet.</p>
+                  <div className="flex flex-col items-center justify-center py-4 opacity-50">
+                    <ListTodoIcon className="size-8 mb-2 text-base-content/20" />
+                    <p className="text-sm font-medium">No tasks added yet.</p>
+                  </div>
                 ) : (
                   tasks.slice(0, expanded ? undefined : 3).map((task) => (
                     <div
                       key={task._id}
-                      className="flex items-start gap-3 group"
+                      className={`flex items-start gap-3 group/item p-1.5 -mx-1.5 rounded-lg hover:bg-base-200/50 transition-colors cursor-pointer ${task.completed ? 'opacity-60' : ''}`}
                       onClick={(e) => toggleTaskCompletion(e, task._id)}
                     >
-                      <button className={`mt-0.5 shrink-0 transition-colors ${task.completed ? 'text-secondary' : 'text-base-content/30 group-hover:text-secondary/50'}`}>
-                        {task.completed ? <CheckCircle2Icon className="size-5" /> : <CircleIcon className="size-5" />}
+                      <button className={`mt-0.5 shrink-0 transition-all duration-300 ${task.completed ? 'text-secondary scale-110' : 'text-base-content/30 group-hover/item:text-secondary/50 group-hover/item:scale-105'}`}>
+                        {task.completed ? <CheckCircle2Icon className="size-5 drop-shadow-sm" /> : <CircleIcon className="size-5" />}
                       </button>
-                      <span className={`text-sm leading-relaxed transition-all ${task.completed ? 'text-base-content/40 line-through' : 'text-base-content/80'}`}>
+                      <span className={`text-sm leading-relaxed transition-all duration-300 ${task.completed ? 'text-base-content/50 line-through decoration-secondary/50 decoration-2' : 'text-base-content/90 font-medium'}`}>
                         {task.text}
                       </span>
                     </div>
                   ))
                 )}
                 {!expanded && tasks.length > 3 && (
-                  <p className="text-xs text-secondary font-medium pt-1">
-                    +{tasks.length - 3} more tasks
-                  </p>
+                  <div className="pt-2 text-center">
+                    <span className="inline-block px-3 py-1 bg-secondary/10 text-secondary text-xs font-bold rounded-full">
+                      +{tasks.length - 3} more tasks
+                    </span>
+                  </div>
                 )}
               </div>
               {!expanded && (
-                <div className="absolute bottom-0 left-0 right-0 h-6 bg-gradient-to-t from-base-100 to-transparent pointer-events-none"></div>
+                <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-base-100 to-transparent pointer-events-none"></div>
               )}
             </>
           )}
@@ -264,38 +274,39 @@ const TodoCard = ({ note, setNotes }) => {
 
         {/* Footer: Date + Actions */}
         <div className="flex justify-between items-center mt-auto pt-4 shrink-0 border-t border-base-200/50">
-          <span className="text-xs font-medium text-base-content/50">
+          <span className="text-[11px] font-medium text-base-content/50 uppercase tracking-wide">
             {formatDate(new Date(note.createdAt))}
           </span>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             {editing ? (
               <>
                 <button
-                  className="btn btn-ghost btn-xs text-base-content/60 hover:text-base-content"
+                  className="btn btn-ghost btn-sm btn-square text-base-content/60 hover:text-error hover:bg-error/10"
                   onClick={handleCancelEdit}
+                  title="Cancel"
                 >
                   <XIcon className="size-4" />
                 </button>
                 <button
-                  className="btn btn-secondary btn-xs"
+                  className="btn btn-secondary btn-sm btn-square"
                   onClick={handleSave}
                   disabled={saving}
+                  title="Save"
                 >
-                  <SaveIcon className="size-4 mr-1" />
-                  {saving ? "Saving..." : "Save"}
+                  {saving ? <span className="loading loading-spinner loading-xs"></span> : <SaveIcon className="size-4" />}
                 </button>
               </>
             ) : (
               <>
                 <button
-                  className="btn btn-ghost btn-xs btn-square text-base-content/60 hover:text-secondary hover:bg-secondary/10 transition-colors"
+                  className="btn btn-ghost btn-sm btn-square text-base-content/50 hover:text-secondary hover:bg-secondary/10 transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100"
                   onClick={handleEdit}
                   title="Edit to-do list"
                 >
                   <PenSquareIcon className="size-4" />
                 </button>
                 <button
-                  className="btn btn-ghost btn-xs btn-square text-base-content/60 hover:text-error hover:bg-error/10 transition-colors"
+                  className="btn btn-ghost btn-sm btn-square text-base-content/50 hover:text-error hover:bg-error/10 transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100"
                   onClick={(e) => handleDelete(e, note._id)}
                   title="Delete to-do list"
                 >

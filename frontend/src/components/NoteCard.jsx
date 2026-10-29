@@ -120,38 +120,37 @@ const NoteCard = ({ note, setNotes }) => {
 
   return (
     <div
-      className={`card bg-base-100 transition-all duration-300 border border-base-300 border-t-4 border-t-primary cursor-pointer self-start ${
-        expanded ? "shadow-2xl h-auto" : "shadow-sm hover:shadow-md h-full"
+      className={`card bg-base-100 transition-all duration-300 border border-base-300 border-t-4 border-t-primary cursor-pointer self-start group ${
+        expanded ? "shadow-xl h-auto ring-2 ring-primary/20" : "shadow hover:shadow-md h-full hover:border-primary/50"
       }`}
       onClick={toggleExpand}
     >
       <div className="card-body p-5 flex flex-col h-full">
         {/* Header: Title + Expand Icon */}
-        <div className="flex items-start justify-between shrink-0 mb-2 gap-2">
+        <div className="flex items-start justify-between shrink-0 mb-3 gap-2">
           {editing ? (
             <input
               type="text"
-              className="input input-bordered input-sm flex-1 font-bold text-lg"
+              className="input input-bordered input-sm flex-1 font-bold text-lg focus:outline-primary/50 focus:border-primary"
               value={editTitle}
               maxLength={100}
               onChange={(e) => setEditTitle(e.target.value)}
               onClick={(e) => e.stopPropagation()}
+              autoFocus
             />
           ) : (
-            <h3 className="card-title text-lg font-bold text-base-content leading-tight">{note.title}</h3>
+            <h3 className="card-title text-lg font-bold text-base-content leading-tight group-hover:text-primary transition-colors">{note.title}</h3>
           )}
-          {expanded ? (
-            <ChevronUpIcon className="size-5 text-base-content/40 shrink-0 mt-0.5" />
-          ) : (
-            <ChevronDownIcon className="size-5 text-base-content/40 shrink-0 mt-0.5" />
-          )}
+          <button className={`btn btn-ghost btn-xs btn-circle bg-base-200/50 hover:bg-base-300 text-base-content/50 hover:text-base-content transition-transform duration-300 ${expanded ? "rotate-180" : ""}`}>
+             <ChevronDownIcon className="size-4" />
+          </button>
         </div>
 
         {/* Content */}
         <div className={`${expanded ? "" : "flex-1 overflow-hidden relative"}`}>
           {editing ? (
             <textarea
-              className="textarea textarea-bordered w-full mt-2 resize-none"
+              className="textarea textarea-bordered w-full mt-2 resize-none focus:outline-primary/50 focus:border-primary text-base"
               rows={5}
               value={editContent}
               maxLength={5000}
@@ -168,7 +167,7 @@ const NoteCard = ({ note, setNotes }) => {
                 {note.content}
               </p>
               {!expanded && (
-                <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-base-100 to-transparent pointer-events-none"></div>
+                <div className="absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-base-100 to-transparent pointer-events-none"></div>
               )}
             </>
           )}
@@ -176,44 +175,45 @@ const NoteCard = ({ note, setNotes }) => {
 
         {/* Footer: Date + Actions */}
         <div className="flex justify-between items-center mt-auto pt-4 shrink-0 border-t border-base-200/50">
-          <span className="text-xs font-medium text-base-content/50">
+          <span className="text-[11px] font-medium text-base-content/50 uppercase tracking-wide">
             {formatDate(new Date(note.createdAt))}
           </span>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             {replies.length > 0 && !editing && (
-              <span className="flex items-center gap-1.5 text-xs font-medium text-base-content/60 mr-2 bg-base-200 px-2 py-1 rounded-full">
-                <MessageCircleIcon className="size-3.5" />
+              <span className="flex items-center gap-1.5 text-xs font-medium text-base-content/70 mr-1 bg-base-200/80 px-2.5 py-1 rounded-full border border-base-300">
+                <MessageCircleIcon className="size-3.5 text-primary/70" />
                 {replies.length}
               </span>
             )}
             {editing ? (
               <>
                 <button
-                  className="btn btn-ghost btn-xs text-base-content/60 hover:text-base-content"
+                  className="btn btn-ghost btn-sm btn-square text-base-content/60 hover:text-error hover:bg-error/10"
                   onClick={handleCancelEdit}
+                  title="Cancel"
                 >
                   <XIcon className="size-4" />
                 </button>
                 <button
-                  className="btn btn-primary btn-xs"
+                  className="btn btn-primary btn-sm btn-square"
                   onClick={handleSave}
                   disabled={saving}
+                  title="Save"
                 >
-                  <SaveIcon className="size-4 mr-1" />
-                  {saving ? "Saving..." : "Save"}
+                  {saving ? <span className="loading loading-spinner loading-xs"></span> : <SaveIcon className="size-4" />}
                 </button>
               </>
             ) : (
               <>
                 <button
-                  className="btn btn-ghost btn-xs btn-square text-base-content/60 hover:text-primary hover:bg-primary/10 transition-colors"
+                  className="btn btn-ghost btn-sm btn-square text-base-content/50 hover:text-primary hover:bg-primary/10 transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100"
                   onClick={handleEdit}
                   title="Edit note"
                 >
                   <PenSquareIcon className="size-4" />
                 </button>
                 <button
-                  className="btn btn-ghost btn-xs btn-square text-base-content/60 hover:text-error hover:bg-error/10 transition-colors"
+                  className="btn btn-ghost btn-sm btn-square text-base-content/50 hover:text-error hover:bg-error/10 transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100"
                   onClick={(e) => handleDelete(e, note._id)}
                   title="Delete note"
                 >
@@ -231,7 +231,7 @@ const NoteCard = ({ note, setNotes }) => {
             onClick={(e) => e.stopPropagation()}
           >
             <h4 className="text-sm font-semibold text-base-content/80 mb-3 flex items-center gap-2">
-              <MessageCircleIcon className="size-4" />
+              <MessageCircleIcon className="size-4 text-primary" />
               Replies
             </h4>
 
@@ -239,28 +239,30 @@ const NoteCard = ({ note, setNotes }) => {
             {replies.length > 0 ? (
               <div className="space-y-3 mb-4 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
                 {replies.map((reply) => (
-                  <div key={reply._id} className="bg-base-200/50 rounded-xl p-3 border border-base-300/50">
+                  <div key={reply._id} className="bg-base-200/50 rounded-xl p-3.5 border border-base-300/50 hover:border-primary/20 transition-colors">
                     <p className="text-sm text-base-content/90 whitespace-pre-wrap leading-relaxed">
                       {reply.content}
                     </p>
-                    <span className="text-[11px] font-medium text-base-content/40 mt-2 block uppercase tracking-wider">
+                    <span className="text-[10px] font-medium text-base-content/40 mt-2.5 block uppercase tracking-widest flex items-center gap-1">
+                      <div className="w-1 h-1 rounded-full bg-primary/40"></div>
                       {formatDate(new Date(reply.createdAt))}
                     </span>
                   </div>
                 ))}
               </div>
             ) : (
-              <div className="bg-base-200/30 rounded-xl p-4 text-center mb-4 border border-base-300/30 border-dashed">
-                <p className="text-sm text-base-content/50">
+              <div className="bg-base-200/30 rounded-xl p-5 text-center mb-4 border border-base-300/50 border-dashed">
+                <MessageCircleIcon className="size-6 mx-auto text-base-content/20 mb-2" />
+                <p className="text-sm text-base-content/60 font-medium">
                   No replies yet. Be the first to reply!
                 </p>
               </div>
             )}
 
             {/* Reply Form */}
-            <div className="flex gap-2 items-end">
+            <div className="flex gap-2 items-end mt-2">
               <textarea
-                className="textarea textarea-bordered flex-1 text-sm min-h-[2.5rem] resize-none focus:outline-primary/20"
+                className="textarea textarea-bordered flex-1 text-sm min-h-[2.5rem] py-2.5 resize-none focus:outline-primary/50 focus:border-primary bg-base-100"
                 placeholder="Write a reply..."
                 value={replyContent}
                 maxLength={1000}
@@ -274,11 +276,16 @@ const NoteCard = ({ note, setNotes }) => {
                 }}
               />
               <button
-                className="btn btn-primary btn-sm btn-square"
+                className="btn btn-primary btn-sm h-10 px-4"
                 onClick={handleReplySubmit}
                 disabled={submittingReply || !replyContent.trim()}
               >
-                {submittingReply ? <span className="loading loading-spinner loading-xs"></span> : <SendIcon className="size-4" />}
+                {submittingReply ? <span className="loading loading-spinner loading-xs"></span> : (
+                  <>
+                    <span className="hidden sm:inline">Send</span>
+                    <SendIcon className="size-4 ml-1" />
+                  </>
+                )}
               </button>
             </div>
           </div>

@@ -1,9 +1,11 @@
 import { Routes, Route } from "react-router";
-import HomePage from "./pages/HomePage";
-import CreatePage from "./pages/CreatePage";
-import NoteDetailPage from "./pages/NoteDetailPage";
-import SnowfallBackground from "./components/SnowfallBackground";
-import FireworksBackground from "./components/FireworksBackground";
+import { lazy, Suspense } from "react";
+
+const HomePage = lazy(() => import("./pages/HomePage"));
+const CreatePage = lazy(() => import("./pages/CreatePage"));
+const NoteDetailPage = lazy(() => import("./pages/NoteDetailPage"));
+const SnowfallBackground = lazy(() => import("./components/SnowfallBackground"));
+const FireworksBackground = lazy(() => import("./components/FireworksBackground"));
 
 const App = () => {
   const now = new Date();
@@ -14,14 +16,22 @@ const App = () => {
 
   return (
     <div className="relative h-full w-full">
-      {isSnowfall && <SnowfallBackground />}
-      {isFireworks && <FireworksBackground />}
+      <Suspense fallback={null}>
+        {isSnowfall && <SnowfallBackground />}
+        {isFireworks && <FireworksBackground />}
+      </Suspense>
       <div className="absolute inset-0 -z-10 h-full items-center px-5 py-24" />
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/create" element={<CreatePage />} />
-        <Route path="/note/:id" element={<NoteDetailPage />} />
-      </Routes>
+      <Suspense fallback={
+        <div className="flex justify-center items-center h-screen">
+          <span className="loading loading-spinner text-primary loading-lg"></span>
+        </div>
+      }>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/create" element={<CreatePage />} />
+          <Route path="/note/:id" element={<NoteDetailPage />} />
+        </Routes>
+      </Suspense>
     </div>
   );
 };
