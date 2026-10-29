@@ -185,7 +185,11 @@ const TodoCard = ({ note, setNotes }) => {
                {isAllDone && !expanded && <CheckCircle2Icon className="size-4 text-secondary/70 shrink-0" />}
             </div>
           )}
-          <button className={`btn btn-ghost btn-xs btn-circle bg-base-200/50 hover:bg-base-300 text-base-content/50 hover:text-base-content transition-transform duration-300 ${expanded ? "rotate-180" : ""}`}>
+          <button
+            className={`btn btn-ghost btn-xs btn-circle bg-base-200/50 hover:bg-base-300 text-base-content/50 hover:text-base-content transition-transform duration-300 ${expanded ? "rotate-180" : ""}`}
+            aria-label={expanded ? "Collapse to-do list" : "Expand to-do list"}
+            aria-expanded={expanded}
+          >
              <ChevronDownIcon className="size-4" />
           </button>
         </div>
@@ -221,6 +225,7 @@ const TodoCard = ({ note, setNotes }) => {
                     className="btn btn-ghost btn-xs btn-square text-base-content/30 hover:text-error hover:bg-error/10 opacity-0 group-hover/task:opacity-100 focus:opacity-100 transition-all"
                     onClick={() => handleRemoveTask(index)}
                     title="Remove task"
+                    aria-label="Remove task"
                   >
                     <XIcon className="size-4" />
                   </button>
@@ -248,7 +253,10 @@ const TodoCard = ({ note, setNotes }) => {
                       className={`flex items-start gap-3 group/item p-1.5 -mx-1.5 rounded-lg hover:bg-base-200/50 transition-colors cursor-pointer ${task.completed ? 'opacity-60' : ''}`}
                       onClick={(e) => toggleTaskCompletion(e, task._id)}
                     >
-                      <button className={`mt-0.5 shrink-0 transition-all duration-300 ${task.completed ? 'text-secondary scale-110' : 'text-base-content/30 group-hover/item:text-secondary/50 group-hover/item:scale-105'}`}>
+                      <button
+                        className={`mt-0.5 shrink-0 transition-all duration-300 ${task.completed ? 'text-secondary scale-110' : 'text-base-content/30 group-hover/item:text-secondary/50 group-hover/item:scale-105'}`}
+                        aria-label={task.completed ? "Mark task as incomplete" : "Mark task as complete"}
+                      >
                         {task.completed ? <CheckCircle2Icon className="size-5 drop-shadow-sm" /> : <CircleIcon className="size-5" />}
                       </button>
                       <span className={`text-sm leading-relaxed transition-all duration-300 ${task.completed ? 'text-base-content/50 line-through decoration-secondary/50 decoration-2' : 'text-base-content/90 font-medium'}`}>
@@ -284,6 +292,7 @@ const TodoCard = ({ note, setNotes }) => {
                   className="btn btn-ghost btn-sm btn-square text-base-content/60 hover:text-error hover:bg-error/10"
                   onClick={handleCancelEdit}
                   title="Cancel"
+                  aria-label="Cancel edit"
                 >
                   <XIcon className="size-4" />
                 </button>
@@ -292,6 +301,7 @@ const TodoCard = ({ note, setNotes }) => {
                   onClick={handleSave}
                   disabled={saving}
                   title="Save"
+                  aria-label="Save to-do list"
                 >
                   {saving ? <span className="loading loading-spinner loading-xs"></span> : <SaveIcon className="size-4" />}
                 </button>
@@ -302,6 +312,7 @@ const TodoCard = ({ note, setNotes }) => {
                   className="btn btn-ghost btn-sm btn-square text-base-content/50 hover:text-secondary hover:bg-secondary/10 transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100"
                   onClick={handleEdit}
                   title="Edit to-do list"
+                  aria-label="Edit to-do list"
                 >
                   <PenSquareIcon className="size-4" />
                 </button>
@@ -309,6 +320,7 @@ const TodoCard = ({ note, setNotes }) => {
                   className="btn btn-ghost btn-sm btn-square text-base-content/50 hover:text-error hover:bg-error/10 transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100"
                   onClick={(e) => handleDelete(e, note._id)}
                   title="Delete to-do list"
+                  aria-label="Delete to-do list"
                 >
                   <Trash2Icon className="size-4" />
                 </button>
