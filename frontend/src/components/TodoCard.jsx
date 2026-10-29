@@ -13,6 +13,7 @@ import {
 import { formatDate } from "../lib/utils";
 import api from "../lib/axios";
 import toast from "react-hot-toast";
+import useTasks from "../hooks/useTasks";
 
 const TodoCard = ({ note, setNotes }) => {
   const [expanded, setExpanded] = useState(false);
@@ -21,7 +22,7 @@ const TodoCard = ({ note, setNotes }) => {
   // Inline edit state
   const [editing, setEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(note.title);
-  const [editTasks, setEditTasks] = useState([...(note.tasks || [])]);
+  const { tasks: editTasks, setTasks: setEditTasks, handleTaskTextChange, handleAddTask, handleRemoveTask } = useTasks([...(note.tasks || [])]);
   const [saving, setSaving] = useState(false);
 
   const handleDelete = async (e, id) => {
@@ -131,22 +132,6 @@ const TodoCard = ({ note, setNotes }) => {
     } finally {
       setSaving(false);
     }
-  };
-
-  const handleTaskTextChange = (index, newText) => {
-    const newTasks = [...editTasks];
-    newTasks[index].text = newText;
-    setEditTasks(newTasks);
-  };
-
-  const handleAddTask = () => {
-    setEditTasks([...editTasks, { text: "", completed: false }]);
-  };
-
-  const handleRemoveTask = (index) => {
-    const newTasks = [...editTasks];
-    newTasks.splice(index, 1);
-    setEditTasks(newTasks);
   };
 
   const toggleExpand = () => {

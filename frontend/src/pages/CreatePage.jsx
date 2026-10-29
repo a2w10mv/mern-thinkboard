@@ -3,12 +3,13 @@ import { ArrowLeftIcon, FileTextIcon, ListTodoIcon, XIcon, PlusIcon, SaveIcon } 
 import { useState, useRef, useEffect } from "react";
 import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router";
+import useTasks from "../hooks/useTasks";
 
 const CreatePage = () => {
   const [type, setType] = useState("note");
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [tasks, setTasks] = useState([{ text: "", completed: false }]);
+  const { tasks, handleTaskTextChange, handleAddTask, handleRemoveTask } = useTasks();
   const [loading, setLoading] = useState(false);
 
   const titleInputRef = useRef(null);
@@ -20,22 +21,6 @@ const CreatePage = () => {
       titleInputRef.current.focus();
     }
   }, [type]);
-
-  const handleTaskTextChange = (index, newText) => {
-    const newTasks = [...tasks];
-    newTasks[index].text = newText;
-    setTasks(newTasks);
-  };
-
-  const handleAddTask = () => {
-    setTasks([...tasks, { text: "", completed: false }]);
-  };
-
-  const handleRemoveTask = (index) => {
-    const newTasks = [...tasks];
-    newTasks.splice(index, 1);
-    setTasks(newTasks);
-  };
 
   const handleKeyDown = (e, index) => {
     // Add new task when pressing Enter in a task input (if it's not empty)

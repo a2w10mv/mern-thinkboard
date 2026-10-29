@@ -3,11 +3,13 @@ import { Link, useNavigate, useParams } from "react-router";
 import api from "./../lib/axios";
 import { LoaderIcon, toast } from "react-hot-toast";
 import { ArrowLeftIcon, Trash2Icon, SaveIcon, FileTextIcon, ListTodoIcon, XIcon, PlusIcon } from "lucide-react";
+import useTasks from "../hooks/useTasks";
 
 const NoteDetailPage = () => {
   const [note, setNote] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const { tasks, setTasks, handleTaskTextChange, handleAddTask, handleRemoveTask } = useTasks([]);
 
   const navigate = useNavigate();
   const { id } = useParams();
@@ -17,6 +19,7 @@ const NoteDetailPage = () => {
       try {
         const res = await api.get(`/notes/${id}`);
         setNote(res.data);
+        if (res.data.tasks) setTasks(res.data.tasks);
       } catch (error) {
         console.log("Error in fetching note", error);
         toast.error("Failed to fetch the note");
@@ -26,7 +29,7 @@ const NoteDetailPage = () => {
     };
 
     fetchNote();
-  }, [id]);
+  }, [id, setTasks]);
 
   const handleDelete = async () => {
     if (!window.confirm("Are you sure you want to delete this item?")) return;
@@ -52,7 +55,7 @@ const NoteDetailPage = () => {
       return;
     }
 
-    const validTasks = note.type === "todo" ? note.tasks.filter(t => t.text.trim()) : [];
+    const validTasks = note.type === "todo" ? tasks.filter(t => t.text.trim()) : [];
 
     if (note.type === "todo" && validTasks.length === 0) {
       toast.error("At least one valid task is required for a to-do list");
@@ -77,22 +80,6 @@ const NoteDetailPage = () => {
     } finally {
       setSaving(false);
     }
-  };
-
-  const handleTaskTextChange = (index, newText) => {
-    const newTasks = [...note.tasks];
-    newTasks[index].text = newText;
-    setNote({ ...note, tasks: newTasks });
-  };
-
-  const handleAddTask = () => {
-    setNote({ ...note, tasks: [...note.tasks, { text: "", completed: false }] });
-  };
-
-  const handleRemoveTask = (index) => {
-    const newTasks = [...note.tasks];
-    newTasks.splice(index, 1);
-    setNote({ ...note, tasks: newTasks });
   };
 
   if (loading) {
@@ -178,10 +165,10 @@ const NoteDetailPage = () => {
                 <div className="form-control mb-6">
                   <label className="label flex justify-between">
                     <span className="label-text font-medium">Tasks</span>
-                    <span className="label-text-alt text-base-content/50">{note.tasks?.length || 0} items</span>
+                    <span className="label-text-alt text-base-content/50">{tasks?.length || 0} items</span>
                   </label>
                   <div className="space-y-3 bg-base-200/30 p-4 rounded-xl border border-base-200">
-                    {note.tasks && note.tasks.length > 0 ? note.tasks.map((task, index) => (
+                    {tasks && tasks.length > 0 ? tasks.map((task, index) => (
                       <div key={index} className="flex items-center gap-2 group">
                         <div className="flex-1 relative">
                           <input
@@ -197,7 +184,7 @@ const NoteDetailPage = () => {
                           type="button"
                           className="btn btn-ghost btn-square text-base-content/40 hover:text-error hover:bg-error/10 shrink-0"
                           onClick={() => handleRemoveTask(index)}
-                          disabled={note.tasks.length === 1}
+                          disabled={tasks.length === 1}
                           title="Remove task"
                         >
                           <XIcon className="size-5" />
