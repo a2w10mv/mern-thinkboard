@@ -141,7 +141,11 @@ const NoteCard = ({ note, setNotes }) => {
           ) : (
             <h3 className="card-title text-lg font-bold text-base-content leading-tight group-hover:text-primary transition-colors">{note.title}</h3>
           )}
-          <button className={`btn btn-ghost btn-xs btn-circle bg-base-200/50 hover:bg-base-300 text-base-content/50 hover:text-base-content transition-transform duration-300 ${expanded ? "rotate-180" : ""}`}>
+          <button
+            className={`btn btn-ghost btn-xs btn-circle bg-base-200/50 hover:bg-base-300 text-base-content/50 hover:text-base-content transition-transform duration-300 ${expanded ? "rotate-180" : ""}`}
+            aria-label={expanded ? "Collapse note" : "Expand note"}
+            aria-expanded={expanded}
+          >
              <ChevronDownIcon className="size-4" />
           </button>
         </div>
@@ -191,6 +195,7 @@ const NoteCard = ({ note, setNotes }) => {
                   className="btn btn-ghost btn-sm btn-square text-base-content/60 hover:text-error hover:bg-error/10"
                   onClick={handleCancelEdit}
                   title="Cancel"
+                  aria-label="Cancel edit"
                 >
                   <XIcon className="size-4" />
                 </button>
@@ -199,6 +204,7 @@ const NoteCard = ({ note, setNotes }) => {
                   onClick={handleSave}
                   disabled={saving}
                   title="Save"
+                  aria-label="Save note"
                 >
                   {saving ? <span className="loading loading-spinner loading-xs"></span> : <SaveIcon className="size-4" />}
                 </button>
@@ -209,6 +215,7 @@ const NoteCard = ({ note, setNotes }) => {
                   className="btn btn-ghost btn-sm btn-square text-base-content/50 hover:text-primary hover:bg-primary/10 transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100"
                   onClick={handleEdit}
                   title="Edit note"
+                  aria-label="Edit note"
                 >
                   <PenSquareIcon className="size-4" />
                 </button>
@@ -216,6 +223,7 @@ const NoteCard = ({ note, setNotes }) => {
                   className="btn btn-ghost btn-sm btn-square text-base-content/50 hover:text-error hover:bg-error/10 transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100"
                   onClick={(e) => handleDelete(e, note._id)}
                   title="Delete note"
+                  aria-label="Delete note"
                 >
                   <Trash2Icon className="size-4" />
                 </button>
