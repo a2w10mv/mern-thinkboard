@@ -38,6 +38,7 @@ const TimerWidget = () => {
           className={`btn btn-sm btn-circle shadow-sm ${isRunning ? 'btn-error hover:btn-error' : 'btn-accent hover:btn-accent'}`}
           onClick={() => setIsRunning(!isRunning)}
           title={isRunning ? "Stop" : "Start"}
+          aria-label={isRunning ? "Stop timer" : "Start timer"}
         >
           {isRunning ?
             <SquareIcon className="size-4" fill="currentColor" /> :
@@ -48,6 +49,7 @@ const TimerWidget = () => {
           className="btn btn-sm btn-circle btn-ghost bg-base-200 hover:bg-base-300 text-base-content/70 hover:text-base-content"
           onClick={() => { setIsRunning(false); setTime(0); }}
           title="Reset"
+          aria-label="Reset timer"
           disabled={time === 0 && !isRunning}
         >
           <RotateCcwIcon className="size-4" />

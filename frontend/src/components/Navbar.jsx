@@ -34,7 +34,7 @@ const Navbar = () => {
           </Link>
           <div className="flex items-center gap-3">
             <div className="dropdown dropdown-end">
-              <div tabIndex={0} role="button" className="btn btn-ghost btn-sm h-10 px-3 bg-base-200/50 hover:bg-base-200 border border-base-200">
+              <div tabIndex={0} role="button" aria-label="Select Theme" className="btn btn-ghost btn-sm h-10 px-3 bg-base-200/50 hover:bg-base-200 border border-base-200">
                 <Palette className="size-4 text-base-content/70" />
                 <span className="hidden md:inline text-sm font-medium text-base-content/70 capitalize">{theme}</span>
               </div>
