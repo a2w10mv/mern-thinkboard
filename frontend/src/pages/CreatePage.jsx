@@ -188,6 +188,7 @@ const CreatePage = () => {
                             onClick={() => handleRemoveTask(index)}
                             disabled={tasks.length === 1}
                             title="Remove task"
+                            aria-label="Remove task"
                           >
                             <XIcon className="size-5" />
                           </button>
