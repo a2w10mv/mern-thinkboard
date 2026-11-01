@@ -285,6 +285,7 @@ const NoteCard = ({ note, setNotes }) => {
               />
               <button
                 className="btn btn-primary btn-sm h-10 px-4"
+                aria-label="Send reply"
                 onClick={handleReplySubmit}
                 disabled={submittingReply || !replyContent.trim()}
               >

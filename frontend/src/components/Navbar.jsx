@@ -24,7 +24,7 @@ const Navbar = () => {
     <header className="bg-base-100 border-b border-base-200 sticky top-0 z-50 shadow-sm backdrop-blur-md bg-opacity-90 transition-all duration-300">
       <div className="mx-auto max-w-[1400px] px-4 py-3">
         <div className="flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 group">
+          <Link to="/" aria-label="ThinkBoard Home" className="flex items-center gap-2 group">
             <div className="bg-primary/10 text-primary p-2 rounded-lg group-hover:bg-primary group-hover:text-primary-content transition-colors">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-brain"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z"/><path d="M15 13a4.5 4.5 0 0 1-3-4 4.5 4.5 0 0 1-3 4"/><path d="M17.599 6.5a3 3 0 0 0 .399-1.375"/></svg>
             </div>
@@ -34,7 +34,7 @@ const Navbar = () => {
           </Link>
           <div className="flex items-center gap-3">
             <div className="dropdown dropdown-end">
-              <div tabIndex={0} role="button" className="btn btn-ghost btn-sm h-10 px-3 bg-base-200/50 hover:bg-base-200 border border-base-200">
+              <div tabIndex={0} role="button" aria-label={`Select theme, current theme is ${theme}`} className="btn btn-ghost btn-sm h-10 px-3 bg-base-200/50 hover:bg-base-200 border border-base-200">
                 <Palette className="size-4 text-base-content/70" />
                 <span className="hidden md:inline text-sm font-medium text-base-content/70 capitalize">{theme}</span>
               </div>
@@ -66,7 +66,7 @@ const Navbar = () => {
               </ul>
             </div>
 
-            <Link to={"/create"} className="btn btn-primary btn-sm h-10 shadow-sm hover:shadow-md transition-shadow">
+            <Link to={"/create"} aria-label="Create New Item" className="btn btn-primary btn-sm h-10 shadow-sm hover:shadow-md transition-shadow">
               <PlusIcon className="size-4" />
               <span className="hidden sm:inline font-medium">New Item</span>
             </Link>
