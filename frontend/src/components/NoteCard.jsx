@@ -287,6 +287,7 @@ const NoteCard = ({ note, setNotes }) => {
                 className="btn btn-primary btn-sm h-10 px-4"
                 onClick={handleReplySubmit}
                 disabled={submittingReply || !replyContent.trim()}
+                aria-label="Send reply"
               >
                 {submittingReply ? <span className="loading loading-spinner loading-xs"></span> : (
                   <>

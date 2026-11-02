@@ -199,6 +199,7 @@ const NoteDetailPage = () => {
                           onClick={() => handleRemoveTask(index)}
                           disabled={note.tasks.length === 1}
                           title="Remove task"
+                          aria-label="Remove task"
                         >
                           <XIcon className="size-5" />
                         </button>

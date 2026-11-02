@@ -66,7 +66,7 @@ const Navbar = () => {
               </ul>
             </div>
 
-            <Link to={"/create"} className="btn btn-primary btn-sm h-10 shadow-sm hover:shadow-md transition-shadow">
+            <Link to={"/create"} className="btn btn-primary btn-sm h-10 shadow-sm hover:shadow-md transition-shadow" aria-label="Create new item">
               <PlusIcon className="size-4" />
               <span className="hidden sm:inline font-medium">New Item</span>
             </Link>
