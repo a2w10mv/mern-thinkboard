@@ -130,11 +130,12 @@ const CreatePage = () => {
 
               <form onSubmit={handleSubmit}>
                 <div className="form-control mb-5">
-                  <label className="label">
+                  <label htmlFor="title" className="label">
                     <span className="label-text font-medium text-base">Title</span>
                     <span className="label-text-alt text-base-content/50">{title.length}/100</span>
                   </label>
                   <input
+                    id="title"
                     ref={titleInputRef}
                     type="text"
                     placeholder="Enter a descriptive title..."
@@ -147,11 +148,12 @@ const CreatePage = () => {
 
                 <div className={`transition-all duration-300 ${type === 'note' ? 'opacity-100 max-h-[500px]' : 'opacity-0 max-h-0 overflow-hidden m-0 p-0'}`}>
                   <div className="form-control mb-6">
-                    <label className="label">
+                    <label htmlFor="content" className="label">
                       <span className="label-text font-medium text-base">Content</span>
                       <span className="label-text-alt text-base-content/50">{content.length}/5000</span>
                     </label>
                     <textarea
+                      id="content"
                       placeholder="Write your note here... (Markdown is not currently supported)"
                       className="textarea textarea-bordered h-48 text-base leading-relaxed resize-none focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors"
                       value={content}
@@ -173,6 +175,7 @@ const CreatePage = () => {
                           <div className="flex-1 relative">
                             <input
                               type="text"
+                              aria-label={`Task ${index + 1}`}
                               placeholder={`Task ${index + 1}`}
                               className="input input-bordered w-full pr-10 focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary transition-colors"
                               value={task.text}
