@@ -208,6 +208,7 @@ const HomePage = () => {
                       className="join-item btn btn-sm hover:bg-base-300"
                       disabled={page === 1}
                       onClick={() => setPage(p => Math.max(1, p - 1))}
+                      aria-label="Previous page"
                     >
                       <ChevronLeftIcon className="size-4" />
                       Prev
@@ -219,6 +220,7 @@ const HomePage = () => {
                       className="join-item btn btn-sm hover:bg-base-300"
                       disabled={page === totalPages || items.length === 0}
                       onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                      aria-label="Next page"
                     >
                       Next
                       <ChevronRightIcon className="size-4" />
