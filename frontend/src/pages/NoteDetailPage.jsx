@@ -148,10 +148,11 @@ const NoteDetailPage = () => {
               </div>
 
               <div className="form-control mb-4">
-                <label className="label">
+                <label className="label" htmlFor="title">
                   <span className="label-text font-medium">Title</span>
                 </label>
                 <input
+                  id="title"
                   type="text"
                   placeholder="Enter title here..."
                   className="input input-bordered focus:input-primary text-lg font-semibold"
@@ -163,10 +164,11 @@ const NoteDetailPage = () => {
 
               {isNote ? (
                 <div className="form-control mb-6">
-                  <label className="label">
+                  <label className="label" htmlFor="content">
                     <span className="label-text font-medium">Content</span>
                   </label>
                   <textarea
+                    id="content"
                     placeholder="Write your note here..."
                     className="textarea textarea-bordered h-48 focus:textarea-primary text-base leading-relaxed"
                     value={note.content}
