@@ -187,6 +187,7 @@ const NoteCard = ({ note, setNotes }) => {
                 <button
                   className="btn btn-ghost btn-xs"
                   onClick={handleCancelEdit}
+                  aria-label="Cancel Edit"
                 >
                   <XIcon className="size-4" />
                 </button>
@@ -201,12 +202,13 @@ const NoteCard = ({ note, setNotes }) => {
               </>
             ) : (
               <>
-                <button className="btn btn-ghost btn-xs" onClick={handleEdit}>
+                <button className="btn btn-ghost btn-xs" onClick={handleEdit} aria-label="Edit Note">
                   <PenSquareIcon className="size-4" />
                 </button>
                 <button
                   className="btn btn-ghost btn-xs text-error"
                   onClick={(e) => handleDelete(e, note._id)}
+                  aria-label="Delete Note"
                 >
                   <Trash2Icon className="size-4" />
                 </button>
@@ -256,6 +258,7 @@ const NoteCard = ({ note, setNotes }) => {
                 className="btn btn-primary btn-sm self-end"
                 onClick={handleReplySubmit}
                 disabled={submittingReply}
+                aria-label="Submit Reply"
               >
                 {submittingReply ? "..." : <SendIcon className="size-4" />}
               </button>
