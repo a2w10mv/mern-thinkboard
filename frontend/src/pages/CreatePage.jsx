@@ -55,10 +55,11 @@ const CreatePage = () => {
               <h2 className="card-title text-2xl mb-4">Create New Note</h2>
               <form onSubmit={handleSubmit}>
                 <div className="form-control mb-4">
-                  <label className="label">
+                  <label htmlFor="title" className="label">
                     <span className="label-text">Title</span>
                   </label>
                   <input
+                    id="title"
                     type="text"
                     placeholder="Note Title"
                     className="input input-bordered"
@@ -67,10 +68,11 @@ const CreatePage = () => {
                   />
                 </div>
                 <div className="form-control mb-4">
-                  <label className="label">
+                  <label htmlFor="content" className="label">
                     <span className="label-text">Content</span>
                   </label>
                   <textarea
+                    id="content"
                     placeholder="Write your note here..."
                     className="textarea textarea-bordered h-32"
                     value={content}
